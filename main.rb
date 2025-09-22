@@ -2,6 +2,18 @@ require 'dotenv/load'
 require 'discordrb'
 
 bot = Discordrb::Bot.new(token: ENV['BOT_TOKEN'])
+messages = Array.new
+
+# called when a message is sent in a channel
+bot.message do |event|
+  # store value in list
+  if messages.count >= 5
+    messages << event.message.content
+  else
+    arr.delete_at(0)
+    messages << event.message.content
+  end
+end
 
 # called if the bot is *directly mentioned*, i.e. not using a role mention or @everyone/@here.
 bot.mention do |event|
