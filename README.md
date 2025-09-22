@@ -1,6 +1,8 @@
 # Slop
 
-A Discord bot that replies to mentions with a single emoji
+A Discord bot that replies to mentions with a single emoji.
+
+Written in Ruby because idk
 
 ## Credits
 
