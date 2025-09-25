@@ -6,7 +6,9 @@ require 'discordrb'
 intents = Discordrb::UNPRIVILEGED_INTENTS + 32768 # read message intent
 messages = Array.new
 messageAmount = (ENV['MESSAGE_COUNT'] ||= 20.to_s).to_i # gotta be a better way man
-adminId = ENV['ADMIN_ID']
+adminId = ENV['ADMIN_ID'].to_i
+
+fallbackEmoji = ['🔥', '👍', '👎', '🦭', '🤷', '😎', '💀', '🚬', '🗣️', '🤡'] # TODO: load from file
 
 puts "Message amount set to #{messageAmount}\n"
 
@@ -19,16 +21,14 @@ bot.command :slop, help_available: false do |event|
   event << '🤖'
   event << "I'm a bot that responds to messages with a single emoji."
   event << '💬'
-  event << "Just @ me to try me out!\n"
-  event << '⚠️'
-  event << "(I don't actually process messages yet, but soon)"
+  event << "Just @ me to try me out!"
 
   # commands send whatever is returned from the block to the channel
   # don't have to worry about return value here because `event << line` automatically returns nil
 end
 
 bot.command :exit, help_available: false do |event|
-  break unless event.user.id == adminId.to_i
+  break unless event.user.id == adminId
 
   event.respond '🖖'
   exit
@@ -50,7 +50,9 @@ end
 # called if the bot is *directly mentioned*, i.e. not using a role mention or @everyone/@here
 bot.mention do |event|
   # send a message in response to the bot being mentioned
-  event.respond '👍'
+
+  # fallback message if API response cannot be parsed
+  event.respond fallbackEmoji[rand fallbackEmoji.count]
 end
 
 def shutdown bot, reason

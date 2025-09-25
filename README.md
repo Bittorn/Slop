@@ -1,8 +1,10 @@
 # Slop
 
-A Discord bot that replies to mentions with a single emoji.
+Simple Logographic Output Provider (Slop) is a Discord bot written in Ruby that queries a locally-running AI model and replies to mentions with a single appropriate emoji.
 
-Written in Ruby because idk
+## Ollama
+
+If the bot cannot connect to Ollama, or does not receive a valid formatted response, it will choose from a random selection of emojis and then send one of those. To be honest, users likely won't know the difference.
 
 ## Credits
 
