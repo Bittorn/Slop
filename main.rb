@@ -14,9 +14,14 @@ bot = Discordrb::Commands::CommandBot.new token: ENV['BOT_TOKEN'], intents: [int
 
 bot.command :slop, help_available: false do |event|
 
-  event << "👋 Hi, I'm Slop!\n"
-  event << "🤖 I'm a bot that responds to messages with a single emoji.\n"
-  event << '💬 Just @ me to try me out!'
+  event << '👋'
+  event << "Hi, I'm Slop!"
+  event << '🤖'
+  event << "I'm a bot that responds to messages with a single emoji."
+  event << '💬'
+  event << "Just @ me to try me out!\n"
+  event << '⚠️'
+  event << "(I don't actually process messages yet, but soon)"
 
   # commands send whatever is returned from the block to the channel
   # don't have to worry about return value here because `event << line` automatically returns nil
@@ -45,7 +50,7 @@ end
 # called if the bot is *directly mentioned*, i.e. not using a role mention or @everyone/@here
 bot.mention do |event|
   # send a message in response to the bot being mentioned
-  messages.each{|x| event.respond x}
+  event.respond '👍'
 end
 
 def shutdown bot, reason
