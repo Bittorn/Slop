@@ -3,35 +3,50 @@
 require 'dotenv/load'
 require 'discordrb'
 
+require_relative 'ollama'
+
 intents = Discordrb::UNPRIVILEGED_INTENTS + 32768 # read message intent
 messages = Array.new
-messageAmount = (ENV['MESSAGE_COUNT'] ||= 20.to_s).to_i # gotta be a better way man
 adminId = ENV['ADMIN_ID'].to_i
-
-fallbackEmoji = ['🔥', '👍', '👎', '🦭', '🤷', '😎', '💀', '🚬', '🗣️', '🤡'] # TODO: load from file
-
+messageAmount = (ENV['MESSAGE_COUNT'] ||= 20.to_s).to_i # gotta be a better way man
 puts "Message amount set to #{messageAmount}\n"
+ollamaModel = ENV['OLLAMA_MODEL'] ||= 'embeddinggemma:300m'
+ollamaPrompt = ENV['OLLAMA_PROMPT'] ||= 'whatever'
+puts "Ollama model set to #{ollamaModel}\n"
 
-bot = Discordrb::Commands::CommandBot.new token: ENV['BOT_TOKEN'], intents: [intents], prefix: '!'
+fallbackEmoji = ['🔥', '👍', '👎', '🦭', '🤷', '💀', '🗣️', '🤡'] # TODO: load from file
 
-bot.command :slop, help_available: false do |event|
+bot = Discordrb::Commands::CommandBot.new token: ENV['BOT_TOKEN'], intents: [intents], prefix: '!slop '
 
-  event << '👋'
-  event << "Hi, I'm Slop!"
-  event << '🤖'
-  event << "I'm a bot that responds to messages with a single emoji."
-  event << '💬'
-  event << "Just @ me to try me out!"
+bot.command :help, help_available: false do |event|
+  # TODO: spruce this up
+
+  event.send_temp "👋 Hi, I'm Slop!\n🤖 I'm a bot that responds to messages with a single emoji.\n💬 Just @ me to try me out!"
+  return nil
 
   # commands send whatever is returned from the block to the channel
-  # don't have to worry about return value here because `event << line` automatically returns nil
 end
 
+# kills the bot on command
 bot.command :exit, help_available: false do |event|
   break unless event.user.id == adminId
 
-  event.respond '🖖'
+  event.send_temp '🖖'
   exit
+end
+
+# ensures LLM model is pulled
+bot.command :setup, help_available: false do |event|
+  break unless event.user.id == adminId
+
+  msg = event.send_temp '🤖 Pulling image...'
+  if pull ollamaModel
+    msg.edit '🤖 Successfully pulled image.'
+  else
+    msg.edit '🤖 Unable to pull image.'
+  end
+  
+  return nil
 end
 
 # called when a message is sent in a channel
@@ -42,7 +57,7 @@ bot.message do |event|
     messages.delete_at 0
   end
 
-  if event.message.content != '<@1419551017606844458>'
+  if event.message.content != '<@1419551017606844458>' # TODO: make this not hard-coded
     messages << event.message.content
   end
 end

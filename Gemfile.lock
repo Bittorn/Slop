@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    ast (2.4.3)
     base64 (0.3.0)
     benchmark (0.4.1)
     discordrb (3.5.0)
@@ -20,6 +21,9 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.0.8)
       domain_name (~> 0.5)
+    json (2.15.0)
+    language_server-protocol (3.17.0.5)
+    lint_roller (1.1.0)
     logger (1.7.0)
     mime-types (3.7.0)
       logger
@@ -30,18 +34,39 @@ GEM
     opus-ruby (1.0.1)
       ffi
     parallel (1.27.0)
+    parser (3.3.9.0)
+      ast (~> 2.4.1)
+      racc
     prism (1.5.1)
+    racc (1.8.1)
+    rainbow (3.1.1)
     rbi (0.3.6)
       prism (~> 1.0)
       rbs (>= 3.4.4)
     rbs (3.9.5)
       logger
+    regexp_parser (2.11.3)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     rexml (3.4.4)
+    rubocop (1.81.1)
+      json (~> 2.3)
+      language_server-protocol (~> 3.17.0.2)
+      lint_roller (~> 1.1.0)
+      parallel (~> 1.10)
+      parser (>= 3.3.0.2)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 2.9.3, < 3.0)
+      rubocop-ast (>= 1.47.1, < 2.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 2.4.0, < 4.0)
+    rubocop-ast (1.47.1)
+      parser (>= 3.3.7.2)
+      prism (~> 1.4)
+    ruby-progressbar (1.13.0)
     sorbet (0.6.12566)
       sorbet-static (= 0.6.12566)
     sorbet-runtime (0.6.12566)
@@ -67,6 +92,9 @@ GEM
       thor (>= 1.2.0)
       yard-sorbet
     thor (1.4.0)
+    unicode-display_width (3.2.0)
+      unicode-emoji (~> 4.1)
+    unicode-emoji (4.1.0)
     websocket (1.2.11)
     websocket-client-simple (0.9.0)
       base64
@@ -84,6 +112,7 @@ PLATFORMS
 DEPENDENCIES
   discordrb
   dotenv
+  rubocop
   sorbet-static-and-runtime
   tapioca
 
