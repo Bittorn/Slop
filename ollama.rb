@@ -11,6 +11,7 @@ def pull model
     response = JSON.parse query
     return response['status'] == 'success' # TODO: verify this is true when model is still available
   rescue
+    puts 'Could not contact Ollama'
     return false
   end
 end
