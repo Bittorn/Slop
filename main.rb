@@ -11,7 +11,7 @@ adminId = ENV['ADMIN_ID'].to_i
 messageAmount = (ENV['MESSAGE_COUNT'] ||= 20.to_s).to_i # gotta be a better way man
 puts "Message amount set to #{messageAmount}\n"
 ollamaModel = ENV['OLLAMA_MODEL'] ||= 'embeddinggemma:300m'
-ollamaPrompt = ENV['OLLAMA_PROMPT'] ||= 'whatever'
+ollamaPrompt = ENV['OLLAMA_PROMPT'] ||= "Respond to this with a single emoji. Do not provide anything else in response."
 puts "Ollama model set to #{ollamaModel}\n"
 
 fallbackEmoji = ['🔥', '👍', '👎', '🦭', '🤷', '💀', '🗣️', '🤡'] # TODO: load from file
@@ -21,8 +21,9 @@ bot = Discordrb::Commands::CommandBot.new token: ENV['BOT_TOKEN'], intents: [int
 bot.command :help, help_available: false do |event|
   # TODO: spruce this up
 
-  event.send_temp "👋 Hi, I'm Slop!\n🤖 I'm a bot that responds to messages with a single emoji.\n💬 Just @ me to try me out!"
-  return nil
+  event << "👋 Hi, I'm Slop!"
+  event << "🤖 I'm a bot that responds to messages with a single emoji"
+  event << "💬 Just @ me to try me out!"
 
   # commands send whatever is returned from the block to the channel
 end
@@ -31,7 +32,7 @@ end
 bot.command :exit, help_available: false do |event|
   break unless event.user.id == adminId
 
-  event.send_temp '🖖'
+  event.respond '🖖'
   exit
 end
 
@@ -39,7 +40,7 @@ end
 bot.command :setup, help_available: false do |event|
   break unless event.user.id == adminId
 
-  msg = event.send_temp '🤖 Pulling image...'
+  msg = event.respond '🤖 Pulling image...'
   if pull ollamaModel
     msg.edit '🤖 Successfully pulled image.'
   else
@@ -65,9 +66,18 @@ end
 # called if the bot is *directly mentioned*, i.e. not using a role mention or @everyone/@here
 bot.mention do |event|
   # send a message in response to the bot being mentioned
+  prompt = String.new
+  messages.each {|msg| prompt += "#{msg}\n"}
+  prompt += "\n\n#{ollamaPrompt}"
 
-  # fallback message if API response cannot be parsed
-  event.respond fallbackEmoji[rand fallbackEmoji.count]
+  response = query ollamaModel, prompt
+  if (response.length == 4) || (response.length == 1)
+    event.respond response
+  else
+    # fallback message if API response cannot be parsed
+    puts 'Could not parse Ollama response, falling back'
+    event.respond fallbackEmoji[rand fallbackEmoji.count]
+  end
 end
 
 def shutdown bot, reason
