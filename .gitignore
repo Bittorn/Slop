@@ -57,3 +57,4 @@
 
 # temporary
 *.yaml
+.DS_Store
